@@ -1,0 +1,7 @@
+[user]
+	name = Miguel Diaz
+	email = diazmiiguel@gmail.com
+[http]
+	postBuffer = 157286400
+[init]
+	defaultBranch = master
