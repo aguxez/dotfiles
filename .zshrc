@@ -51,3 +51,7 @@ if [ -f '/Users/migueldiaz/Downloads/google-cloud-sdk/completion.zsh.inc' ]; the
 
 export CLOUDSDK_PYTHON=python2
 [ -f "/Users/migueldiaz/.ghcup/env" ] && source "/Users/migueldiaz/.ghcup/env" # ghcup-env
+
+export PATH="$PATH:/Users/migueldiaz/.foundry/bin"
+
+export PATH="$PATH:/Users/migueldiaz/.foundry/bin"
