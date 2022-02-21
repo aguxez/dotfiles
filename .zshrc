@@ -1,5 +1,14 @@
 # Better editor
-export EDITOR=vim
+EDITOR=vim
+
+# Loads vcs_info for PROMPT
+autoload -Uz vcs_info
+precmd() { vcs_info }
+
+zstyle ':vcs_info:git:*' formats 'on %b %u'
+
+setopt prompt_subst
+PROMPT='%F{082}%~%f ${vcs_info_msg_0_} -> '
 
 # ALIASES
 # Alias HH and utilities
