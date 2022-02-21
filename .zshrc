@@ -17,7 +17,12 @@ alias hh='npx hardhat'
 # kubectl
 alias kc=kubectl
 
-ZSH_THEME="fwalch"
+# goodies
+alias ..='cd ..'
+alias ll='ls -l'
+alias la='ls -la'
+
+# -------------------
 
 DISABLE_UPDATE_PROMPT="true"
 
@@ -32,9 +37,13 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 . /Users/migueldiaz/.asdf/completions/asdf.bash
 . /Users/migueldiaz/.asdf/asdf.sh
 
+# ---------------------
+
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# NVM setup is comented because it's super slow and I personally don't use NVM so often to have this active by default
+# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/migueldiaz/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/migueldiaz/Downloads/google-cloud-sdk/path.zsh.inc'; fi
