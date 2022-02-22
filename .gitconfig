@@ -1,7 +1,12 @@
 [user]
 	name = Miguel Diaz
 	email = diazmiiguel@gmail.com
+	signingkey = 84FA9AD947D87CDF
 [http]
 	postBuffer = 157286400
 [init]
 	defaultBranch = master
+[core]
+	editor = vim
+	autocrlf = input
+	whitespace = trailing-space,-space-before-tab,tab-in-indent,cr-at-eo
