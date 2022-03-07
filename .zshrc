@@ -13,6 +13,7 @@ PROMPT='%F{082}%~%f ${vcs_info_msg_0_} -> '
 # ALIASES
 # Alias HH and utilities
 alias hh='npx hardhat'
+alias gst='git status'
 
 # kubectl
 alias kc=kubectl
@@ -59,3 +60,5 @@ bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 
 export GPG_TTY=$(tty)
+
+export PATH="$PATH:/Users/migueldiaz/.foundry/bin"
