@@ -7768,5 +7768,204 @@
       ]
     },
     "mtime": 1627135151830
+  },
+  "{\"filename\":\"/Users/migueldiaz/Development/zed/zed-api/node_modules/semantic-release-cli/src/index.js\",\"env\":{},\"retainLines\":false,\"highlightCode\":true,\"suppressDeprecationMessages\":false,\"presets\":[],\"plugins\":[[[],{\"loose\":false}]],\"ignore\":[],\"code\":true,\"metadata\":true,\"ast\":true,\"comments\":true,\"compact\":\"auto\",\"minified\":false,\"sourceRoot\":\"/Users/migueldiaz/Development/zed/zed-api/node_modules/semantic-release-cli/src\",\"babelrc\":true,\"sourceType\":\"module\",\"moduleIds\":false,\"passPerPreset\":false,\"parserOpts\":false,\"generatorOpts\":false}:6.26.3": {
+    "metadata": {
+      "usedHelpers": [],
+      "marked": [],
+      "modules": {
+        "imports": [],
+        "exports": {
+          "exported": [],
+          "specifiers": []
+        }
+      }
+    },
+    "options": {
+      "filename": "/Users/migueldiaz/Development/zed/zed-api/node_modules/semantic-release-cli/src/index.js",
+      "filenameRelative": "/Users/migueldiaz/Development/zed/zed-api/node_modules/semantic-release-cli/src/index.js",
+      "env": {},
+      "retainLines": false,
+      "highlightCode": true,
+      "suppressDeprecationMessages": false,
+      "presets": [],
+      "plugins": [
+        [
+          [],
+          {
+            "loose": false
+          }
+        ]
+      ],
+      "ignore": [],
+      "code": true,
+      "metadata": true,
+      "ast": false,
+      "comments": true,
+      "compact": "auto",
+      "minified": false,
+      "sourceMaps": "both",
+      "sourceMapTarget": "index.js",
+      "sourceFileName": "index.js",
+      "sourceRoot": "/Users/migueldiaz/Development/zed/zed-api/node_modules/semantic-release-cli/src",
+      "babelrc": false,
+      "sourceType": "module",
+      "moduleRoot": "/Users/migueldiaz/Development/zed/zed-api/node_modules/semantic-release-cli/src",
+      "moduleIds": false,
+      "passPerPreset": false,
+      "parserOpts": false,
+      "generatorOpts": false,
+      "basename": "index"
+    },
+    "ignored": false,
+    "code": "'use strict';\n\n/* eslint require-atomic-updates: off */\n\nconst { readFileSync, writeFileSync } = require('fs');\nconst _ = require('lodash');\nconst pify = require('pify');\nconst nopt = require('nopt');\nconst npm = require('npm');\nconst request = require('request-promise').defaults({ json: true });\nconst ownPkg = require('../package.json');\nconst getLog = require('./lib/log');\n\nconst pkg = JSON.parse(readFileSync('./package.json'));\nif (pkg.name === undefined) throw new Error(`\"name\" key is missing from your package.json`);\n\nrequire('update-notifier')({\n  pkg: _.defaults(ownPkg, { version: '0.0.0' })\n}).notify();\n\nconst knownOptions = {\n  tag: String,\n  version: Boolean,\n  help: Boolean,\n  keychain: Boolean,\n  'ask-for-passwords': Boolean,\n  'gh-token': String,\n  'npm-token': String,\n  'circle-token': String,\n  'npm-username': String\n};\n\nconst shortHands = {\n  v: ['--version'],\n  h: ['--help']\n};\n\nmodule.exports = async function (argv) {\n  const info = {\n    options: _.defaults(nopt(knownOptions, shortHands, argv, 2), {\n      keychain: true,\n      tag: 'latest'\n    })\n  };\n\n  if (info.options.version) {\n    console.log(ownPkg.version || 'development');\n    return;\n  }\n\n  if (info.options.argv.remain[0] !== 'setup' && info.options.argv.remain[0] !== 'init' || info.options.help) {\n    console.log(`\nsemantic-release-cli (v${ownPkg.version})\n\nUsage:\n  semantic-release-cli setup [--tag=<String>]\n\nOptions:\n  -h --help            Show this screen.\n  -v --version         Show version.\n  --[no-]keychain      Use keychain to get passwords [default: true].\n  --ask-for-passwords  Ask for the passwords even if passwords are stored [default: false].\n  --tag=<String>       npm tag to install [default: ’latest’].\n  --gh-token=<String>  GitHub auth token\n  --npm-token=<String> npm auth token\n  --circle-token=<String> CircleCI auth token\n  --npm-username=<String>  npm username\n\nAliases:\n  init                 setup`);\n    return;\n  }\n\n  let config;\n  try {\n    ({ config } = await pify(npm.load)({ progress: false }));\n  } catch (error) {\n    console.log('Failed to load npm config.', error);\n    process.exitCode = 1;\n    return;\n  }\n\n  info.loglevel = config.get('loglevel') || 'warn';\n  const log = getLog(info.loglevel);\n  info.log = log;\n\n  try {\n    await require('./lib/repository')(pkg, info);\n    await require('./lib/npm')(pkg, info);\n    await require('./lib/github')(info);\n    await require('./lib/ci')(pkg, info);\n  } catch (error) {\n    log.error(error);\n    process.exitCode = 1;\n  }\n\n  pkg.version = '0.0.0-development';\n\n  pkg.scripts = pkg.scripts || {};\n  pkg.scripts['semantic-release'] = 'semantic-release';\n\n  pkg.repository = pkg.repository || { type: 'git', url: info.giturl };\n\n  if (info.ghrepo.private && !pkg.publishConfig) {\n    pkg.publishConfig = { access: 'restricted' };\n  }\n\n  try {\n    const { 'dist-tags': distTags } = await request('https://registry.npmjs.org/semantic-release');\n    pkg.devDependencies = pkg.devDependencies || {};\n    pkg.devDependencies['semantic-release'] = `^${distTags[info.options.tag]}`;\n  } catch (error) {\n    log.error('Could not get latest `semantic-release` version.', error);\n  }\n\n  log.verbose('Writing `package.json`.');\n  writeFileSync('package.json', `${JSON.stringify(pkg, null, 2)}\\n`);\n  log.info('Done.');\n};\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImluZGV4LmpzIl0sIm5hbWVzIjpbInJlYWRGaWxlU3luYyIsIndyaXRlRmlsZVN5bmMiLCJyZXF1aXJlIiwiXyIsInBpZnkiLCJub3B0IiwibnBtIiwicmVxdWVzdCIsImRlZmF1bHRzIiwianNvbiIsIm93blBrZyIsImdldExvZyIsInBrZyIsIkpTT04iLCJwYXJzZSIsIm5hbWUiLCJ1bmRlZmluZWQiLCJFcnJvciIsInZlcnNpb24iLCJub3RpZnkiLCJrbm93bk9wdGlvbnMiLCJ0YWciLCJTdHJpbmciLCJCb29sZWFuIiwiaGVscCIsImtleWNoYWluIiwic2hvcnRIYW5kcyIsInYiLCJoIiwibW9kdWxlIiwiZXhwb3J0cyIsImFyZ3YiLCJpbmZvIiwib3B0aW9ucyIsImNvbnNvbGUiLCJsb2ciLCJyZW1haW4iLCJjb25maWciLCJsb2FkIiwicHJvZ3Jlc3MiLCJlcnJvciIsInByb2Nlc3MiLCJleGl0Q29kZSIsImxvZ2xldmVsIiwiZ2V0Iiwic2NyaXB0cyIsInJlcG9zaXRvcnkiLCJ0eXBlIiwidXJsIiwiZ2l0dXJsIiwiZ2hyZXBvIiwicHJpdmF0ZSIsInB1Ymxpc2hDb25maWciLCJhY2Nlc3MiLCJkaXN0VGFncyIsImRldkRlcGVuZGVuY2llcyIsInZlcmJvc2UiLCJzdHJpbmdpZnkiXSwibWFwcGluZ3MiOiI7O0FBQUE7O0FBRUEsTUFBTSxFQUFDQSxZQUFELEVBQWVDLGFBQWYsS0FBZ0NDLFFBQVEsSUFBUixDQUF0QztBQUNBLE1BQU1DLElBQUlELFFBQVEsUUFBUixDQUFWO0FBQ0EsTUFBTUUsT0FBT0YsUUFBUSxNQUFSLENBQWI7QUFDQSxNQUFNRyxPQUFPSCxRQUFRLE1BQVIsQ0FBYjtBQUNBLE1BQU1JLE1BQU1KLFFBQVEsS0FBUixDQUFaO0FBQ0EsTUFBTUssVUFBVUwsUUFBUSxpQkFBUixFQUEyQk0sUUFBM0IsQ0FBb0MsRUFBQ0MsTUFBTSxJQUFQLEVBQXBDLENBQWhCO0FBQ0EsTUFBTUMsU0FBU1IsUUFBUSxpQkFBUixDQUFmO0FBQ0Es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QyxPQUFKLElBQWUsRUFBN0I7QUFDQWpDLE1BQUlpQyxPQUFKLENBQVksa0JBQVosSUFBa0Msa0JBQWxDOztBQUVBakMsTUFBSWtDLFVBQUosR0FBaUJsQyxJQUFJa0MsVUFBSixJQUFrQixFQUFDQyxNQUFNLEtBQVAsRUFBY0MsS0FBS2hCLEtBQUtpQixNQUF4QixFQUFuQzs7QUFFQSxNQUFJakIsS0FBS2tCLE1BQUwsQ0FBWUMsT0FBWixJQUF1QixDQUFDdkMsSUFBSXdDLGFBQWhDLEVBQStDO0FBQzdDeEMsUUFBSXdDLGFBQUosR0FBb0IsRUFBQ0MsUUFBUSxZQUFULEVBQXBCO0FBQ0Q7O0FBRUQsTUFBSTtBQUNGLFVBQU0sRUFBQyxhQUFhQyxRQUFkLEtBQTBCLE1BQU0vQyxRQUFRLDZDQUFSLENBQXRDO0FBQ0FLLFFBQUkyQyxlQUFKLEdBQXNCM0MsSUFBSTJDLGVBQUosSUFBdUIsRUFBN0M7QUFDQTNDLFFBQUkyQyxlQUFKLENBQW9CLGtCQUFwQixJQUEyQyxJQUFHRCxTQUFTdEIsS0FBS0MsT0FBTCxDQUFhWixHQUF0QixDQUEyQixFQUF6RTtBQUNELEdBSkQsQ0FJRSxPQUFPbUIsS0FBUCxFQUFjO0FBQ2RMLFFBQUlLLEtBQUosQ0FBVSxrREFBVixFQUE4REEsS0FBOUQ7QUFDRDs7QUFFREwsTUFBSXFCLE9BQUosQ0FBWSx5QkFBWjtBQUNBdkQsZ0JBQWMsY0FBZCxFQUErQixHQUFFWSxLQUFLNEMsU0FBTCxDQUFlN0MsR0FBZixFQUFvQixJQUFwQixFQUEwQixDQUExQixDQUE2QixJQUE5RDtBQUNBdUIsTUFBSUgsSUFBSixDQUFTLE9BQVQ7QUFDRCxDQWpGRCIsImZpbGUiOiJpbmRleC5qcyIsInNvdXJjZVJvb3QiOiIvVXNlcnMvbWlndWVsZGlhei9EZXZlbG9wbWVudC96ZWQvemVkLWFwaS9ub2RlX21vZHVsZXMvc2VtYW50aWMtcmVsZWFzZS1jbGkvc3JjIiwic291cmNlc0NvbnRlbnQiOlsiLyogZXNsaW50IHJlcXVpcmUtYXRvbWljLXVwZGF0ZXM6IG9mZiAqL1xuXG5jb25zdCB7cmVhZEZpbGVTeW5jLCB3cml0ZUZpbGVTeW5jfSA9IHJlcXVpcmUoJ2ZzJyk7XG5jb25zdCBfID0gcmVxdWlyZSgnbG9kYXNoJyk7XG5jb25zdCBwaWZ5ID0gcmVxdWlyZSgncGlmeScpO1xuY29uc3Qgbm9wdCA9IHJlcXVpcmUoJ25vcHQnKTtcbmNvbnN0IG5wbSA9IHJlcXVpcmUoJ25wbScpO1xuY29uc3QgcmVxdWVzdCA9IHJlcXVpcmUoJ3JlcXVlc3QtcHJvbWlzZScpLmRlZmF1bHRzKHtqc29uOiB0cnVlfSk7XG5jb25zdCBvd25Qa2cgPSByZXF1aXJlKCcuLi9wYWNrYWdlLmpzb24nKTtcbmNvbnN0IGdldExvZyA9IHJlcXVpcmUoJy4vbGliL2xvZycpO1xuXG5jb25zdCBwa2cgPSBKU09OLnBhcnNlKHJlYWRGaWxlU3luYygnLi9wYWNrYWdlLmpzb24nKSk7XG5pZiAocGtnLm5hbWUgPT09IHVuZGVmaW5lZCkgdGhyb3cgbmV3IEVycm9yKGBcIm5hbWVcIiBrZXkgaXMgbWlzc2luZyBmcm9tIHlvdXIgcGFja2FnZS5qc29uYCk7XG5cbnJlcXVpcmUoJ3VwZGF0ZS1ub3RpZmllcicpKHtcbiAgcGtnOiBfLmRlZmF1bHRzKG93blBrZywge3ZlcnNpb246ICcwLjAuMCd9KSxcbn0pLm5vdGlmeSgpO1xuXG5jb25zdCBrbm93bk9wdGlvbnMgPSB7XG4gIHRhZzogU3RyaW5nLFxuICB2ZXJzaW9uOiBCb29sZWFuLFxuICBoZWxwOiBCb29sZWFuLFxuICBrZXljaGFpbjogQm9vbGVhbixcbiAgJ2Fzay1mb3ItcGFzc3dvcmRzJzogQm9vbGVhbixcbiAgJ2doLXRva2VuJzogU3RyaW5nLFxuICAnbnBtLXRva2VuJzogU3RyaW5nLFxuICAnY2lyY2xlLXRva2VuJzogU3RyaW5nLFxuICAnbnBtLXVzZXJuYW1lJzogU3RyaW5nLFxufTtcblxuY29uc3Qgc2hvcnRIYW5kcyA9IHtcbiAgdjogWyctLXZlcnNpb24nXSxcbiAgaDogWyctLWhlbHAnXSxcbn07XG5cbm1vZHVsZS5leHBvcnRzID0gYXN5bmMgZnVuY3Rpb24gKGFyZ3YpIHtcbiAgY29uc3QgaW5mbyA9IHtcbiAgICBvcHRpb25zOiBfLmRlZmF1bHRzKG5vcHQoa25vd25PcHRpb25zLCBzaG9ydEhhbmRzLCBhcmd2LCAyKSwge1xuICAgICAga2V5Y2hhaW46IHRydWUsXG4gICAgICB0YWc6ICdsYXRlc3QnLFxuICAgIH0pLFxuICB9O1xuXG4gIGlmIChpbmZvLm9wdGlvbnMudmVyc2lvbikge1xuICAgIGNvbnNvbGUubG9nKG93blBrZy52ZXJzaW9uIHx8ICdkZXZlbG9wbWVudCcpO1xuICAgIHJldHVybjtcbiAgfVxuXG4gIGlmICgoaW5mby5vcHRpb25zLmFyZ3YucmVtYWluWzBdICE9PSAnc2V0dXAnICYmIGluZm8ub3B0aW9ucy5hcmd2LnJlbWFpblswXSAhPT0gJ2luaXQnKSB8fCBpbmZvLm9wdGlvbnMuaGVscCkge1xuICAgIGNvbnNvbGUubG9nKGBcbnNlbWFudGljLXJlbGVhc2UtY2xpICh2JHtvd25Qa2cudmVyc2lvbn0pXG5cblVzYWdlOlxuICBzZW1hbnRpYy1yZWxlYXNlLWNsaSBzZXR1cCBbLS10YWc9PFN0cmluZz5dXG5cbk9wdGlvbnM6XG4gIC1oIC0taGVscCAgICAgICAgICAgIFNob3cgdGhpcyBzY3JlZW4uXG4gIC12IC0tdmVyc2lvbiAgICAgICAgIFNob3cgdmVyc2lvbi5cbiAgLS1bbm8tXWtleWNoYWluICAgICAgVXNlIGtleWNoYWluIHRvIGdldCBwYXNzd29yZHMgW2RlZmF1bHQ6IHRydWVdLlxuICAtLWFzay1mb3ItcGFzc3dvcmRzICBBc2sgZm9yIHRoZSBwYXNzd29yZHMgZXZlbiBpZiBwYXNzd29yZHMgYXJlIHN0b3JlZCBbZGVmYXVsdDogZmFsc2VdLlxuICAtLXRhZz08U3RyaW5nPiAgICAgICBucG0gdGFnIHRvIGluc3RhbGwgW2RlZmF1bHQ6IOKAmWxhdGVzdOKAmV0uXG4gIC0tZ2gtdG9rZW49PFN0cmluZz4gIEdpdEh1YiBhdXRoIHRva2VuXG4gIC0tbnBtLXRva2VuPTxTdHJpbmc+IG5wbSBhdXRoIHRva2VuXG4gIC0tY2lyY2xlLXRva2VuPTxTdHJpbmc+IENpcmNsZUNJIGF1dGggdG9rZW5cbiAgLS1ucG0tdXNlcm5hbWU9PFN0cmluZz4gIG5wbSB1c2VybmFtZVxuXG5BbGlhc2VzOlxuICBpbml0ICAgICAgICAgICAgICAgICBzZXR1cGApO1xuICAgIHJldHVybjtcbiAgfVxuXG4gIGxldCBjb25maWc7XG4gIHRyeSB7XG4gICAgKHtjb25maWd9ID0gYXdhaXQgcGlmeShucG0ubG9hZCkoe3Byb2dyZXNzOiBmYWxzZX0pKTtcbiAgfSBjYXRjaCAoZXJyb3IpIHtcbiAgICBjb25zb2xlLmxvZygnRmFpbGVkIHRvIGxvYWQgbnBtIGNvbmZpZy4nLCBlcnJvcik7XG4gICAgcHJvY2Vzcy5leGl0Q29kZSA9IDE7XG4gICAgcmV0dXJuO1xuICB9XG5cbiAgaW5mby5sb2dsZXZlbCA9IGNvbmZpZy5nZXQoJ2xvZ2xldmVsJykgfHwgJ3dhcm4nO1xuICBjb25zdCBsb2cgPSBnZXRMb2coaW5mby5sb2dsZXZlbCk7XG4gIGluZm8ubG9nID0gbG9nO1xuXG4gIHRyeSB7XG4gICAgYXdhaXQgcmVxdWlyZSgnLi9saWIvcmVwb3NpdG9yeScpKHBrZywgaW5mbyk7XG4gICAgYXdhaXQgcmVxdWlyZSgnLi9saWIvbnBtJykocGtnLCBpbmZvKTtcbiAgICBhd2FpdCByZXF1aXJlKCcuL2xpYi9naXRodWInKShpbmZvKTtcbiAgICBhd2FpdCByZXF1aXJlKCcuL2xpYi9jaScpKHBrZywgaW5mbyk7XG4gIH0gY2F0Y2ggKGVycm9yKSB7XG4gICAgbG9nLmVycm9yKGVycm9yKTtcbiAgICBwcm9jZXNzLmV4aXRDb2RlID0gMTtcbiAgfVxuXG4gIHBrZy52ZXJzaW9uID0gJzAuMC4wLWRldmVsb3BtZW50JztcblxuICBwa2cuc2NyaXB0cyA9IHBrZy5zY3JpcHRzIHx8IHt9O1xuICBwa2cuc2NyaXB0c1snc2VtYW50aWMtcmVsZWFzZSddID0gJ3NlbWFudGljLXJlbGVhc2UnO1xuXG4gIHBrZy5yZXBvc2l0b3J5ID0gcGtnLnJlcG9zaXRvcnkgfHwge3R5cGU6ICdnaXQnLCB1cmw6IGluZm8uZ2l0dXJsfTtcblxuICBpZiAoaW5mby5naHJlcG8ucHJpdmF0ZSAmJiAhcGtnLnB1Ymxpc2hDb25maWcpIHtcbiAgICBwa2cucHVibGlzaENvbmZpZyA9IHthY2Nlc3M6ICdyZXN0cmljdGVkJ307XG4gIH1cblxuICB0cnkge1xuICAgIGNvbnN0IHsnZGlzdC10YWdzJzogZGlzdFRhZ3N9ID0gYXdhaXQgcmVxdWVzdCgnaHR0cHM6Ly9yZWdpc3RyeS5ucG1qcy5vcmcvc2VtYW50aWMtcmVsZWFzZScpO1xuICAgIHBrZy5kZXZEZXBlbmRlbmNpZXMgPSBwa2cuZGV2RGVwZW5kZW5jaWVzIHx8IHt9O1xuICAgIHBrZy5kZXZEZXBlbmRlbmNpZXNbJ3NlbWFudGljLXJlbGVhc2UnXSA9IGBeJHtkaXN0VGFnc1tpbmZvLm9wdGlvbnMudGFnXX1gO1xuICB9IGNhdGNoIChlcnJvcikge1xuICAgIGxvZy5lcnJvcignQ291bGQgbm90IGdldCBsYXRlc3QgYHNlbWFudGljLXJlbGVhc2VgIHZlcnNpb24uJywgZXJyb3IpO1xuICB9XG5cbiAgbG9nLnZlcmJvc2UoJ1dyaXRpbmcgYHBhY2thZ2UuanNvbmAuJyk7XG4gIHdyaXRlRmlsZVN5bmMoJ3BhY2thZ2UuanNvbicsIGAke0pTT04uc3RyaW5naWZ5KHBrZywgbnVsbCwgMil9XFxuYCk7XG4gIGxvZy5pbmZvKCdEb25lLicpO1xufTtcbiJdfQ==",
+    "ast": null,
+    "map": {
+      "version": 3,
+      "sources": [
+        "index.js"
+      ],
+      "names": [
+        "readFileSync",
+        "writeFileSync",
+        "require",
+        "_",
+        "pify",
+        "nopt",
+        "npm",
+        "request",
+        "defaults",
+        "json",
+        "ownPkg",
+        "getLog",
+        "pkg",
+        "JSON",
+        "parse",
+        "name",
+        "undefined",
+        "Error",
+        "version",
+        "notify",
+        "knownOptions",
+        "tag",
+        "String",
+        "Boolean",
+        "help",
+        "keychain",
+        "shortHands",
+        "v",
+        "h",
+        "module",
+        "exports",
+        "argv",
+        "info",
+        "options",
+        "console",
+        "log",
+        "remain",
+        "config",
+        "load",
+        "progress",
+        "error",
+        "process",
+        "exitCode",
+        "loglevel",
+        "get",
+        "scripts",
+        "repository",
+        "type",
+        "url",
+        "giturl",
+        "ghrepo",
+        "private",
+        "publishConfig",
+        "access",
+        "distTags",
+        "devDependencies",
+        "verbose",
+        "stringify"
+      ],
+      "mappings": "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",
+      "file": "index.js",
+      "sourceRoot": "/Users/migueldiaz/Development/zed/zed-api/node_modules/semantic-release-cli/src",
+      "sourcesContent": [
+        "/* eslint require-atomic-updates: off */\n\nconst {readFileSync, writeFileSync} = require('fs');\nconst _ = require('lodash');\nconst pify = require('pify');\nconst nopt = require('nopt');\nconst npm = require('npm');\nconst request = require('request-promise').defaults({json: true});\nconst ownPkg = require('../package.json');\nconst getLog = require('./lib/log');\n\nconst pkg = JSON.parse(readFileSync('./package.json'));\nif (pkg.name === undefined) throw new Error(`\"name\" key is missing from your package.json`);\n\nrequire('update-notifier')({\n  pkg: _.defaults(ownPkg, {version: '0.0.0'}),\n}).notify();\n\nconst knownOptions = {\n  tag: String,\n  version: Boolean,\n  help: Boolean,\n  keychain: Boolean,\n  'ask-for-passwords': Boolean,\n  'gh-token': String,\n  'npm-token': String,\n  'circle-token': String,\n  'npm-username': String,\n};\n\nconst shortHands = {\n  v: ['--version'],\n  h: ['--help'],\n};\n\nmodule.exports = async function (argv) {\n  const info = {\n    options: _.defaults(nopt(knownOptions, shortHands, argv, 2), {\n      keychain: true,\n      tag: 'latest',\n    }),\n  };\n\n  if (info.options.version) {\n    console.log(ownPkg.version || 'development');\n    return;\n  }\n\n  if ((info.options.argv.remain[0] !== 'setup' && info.options.argv.remain[0] !== 'init') || info.options.help) {\n    console.log(`\nsemantic-release-cli (v${ownPkg.version})\n\nUsage:\n  semantic-release-cli setup [--tag=<String>]\n\nOptions:\n  -h --help            Show this screen.\n  -v --version         Show version.\n  --[no-]keychain      Use keychain to get passwords [default: true].\n  --ask-for-passwords  Ask for the passwords even if passwords are stored [default: false].\n  --tag=<String>       npm tag to install [default: ’latest’].\n  --gh-token=<String>  GitHub auth token\n  --npm-token=<String> npm auth token\n  --circle-token=<String> CircleCI auth token\n  --npm-username=<String>  npm username\n\nAliases:\n  init                 setup`);\n    return;\n  }\n\n  let config;\n  try {\n    ({config} = await pify(npm.load)({progress: false}));\n  } catch (error) {\n    console.log('Failed to load npm config.', error);\n    process.exitCode = 1;\n    return;\n  }\n\n  info.loglevel = config.get('loglevel') || 'warn';\n  const log = getLog(info.loglevel);\n  info.log = log;\n\n  try {\n    await require('./lib/repository')(pkg, info);\n    await require('./lib/npm')(pkg, info);\n    await require('./lib/github')(info);\n    await require('./lib/ci')(pkg, info);\n  } catch (error) {\n    log.error(error);\n    process.exitCode = 1;\n  }\n\n  pkg.version = '0.0.0-development';\n\n  pkg.scripts = pkg.scripts || {};\n  pkg.scripts['semantic-release'] = 'semantic-release';\n\n  pkg.repository = pkg.repository || {type: 'git', url: info.giturl};\n\n  if (info.ghrepo.private && !pkg.publishConfig) {\n    pkg.publishConfig = {access: 'restricted'};\n  }\n\n  try {\n    const {'dist-tags': distTags} = await request('https://registry.npmjs.org/semantic-release');\n    pkg.devDependencies = pkg.devDependencies || {};\n    pkg.devDependencies['semantic-release'] = `^${distTags[info.options.tag]}`;\n  } catch (error) {\n    log.error('Could not get latest `semantic-release` version.', error);\n  }\n\n  log.verbose('Writing `package.json`.');\n  writeFileSync('package.json', `${JSON.stringify(pkg, null, 2)}\\n`);\n  log.info('Done.');\n};\n"
+      ]
+    },
+    "mtime": 1649349461119
+  },
+  "{\"filename\":\"/Users/migueldiaz/Development/zed/zed-api/node_modules/semantic-release-cli/src/lib/log.js\",\"env\":{},\"retainLines\":false,\"highlightCode\":true,\"suppressDeprecationMessages\":false,\"presets\":[],\"plugins\":[[[],{\"loose\":false}]],\"ignore\":[],\"code\":true,\"metadata\":true,\"ast\":true,\"comments\":true,\"compact\":\"auto\",\"minified\":false,\"sourceRoot\":\"/Users/migueldiaz/Development/zed/zed-api/node_modules/semantic-release-cli/src/lib\",\"babelrc\":true,\"sourceType\":\"module\",\"moduleIds\":false,\"passPerPreset\":false,\"parserOpts\":false,\"generatorOpts\":false}:6.26.3": {
+    "metadata": {
+      "usedHelpers": [],
+      "marked": [],
+      "modules": {
+        "imports": [],
+        "exports": {
+          "exported": [],
+          "specifiers": []
+        }
+      }
+    },
+    "options": {
+      "filename": "/Users/migueldiaz/Development/zed/zed-api/node_modules/semantic-release-cli/src/lib/log.js",
+      "filenameRelative": "/Users/migueldiaz/Development/zed/zed-api/node_modules/semantic-release-cli/src/lib/log.js",
+      "env": {},
+      "retainLines": false,
+      "highlightCode": true,
+      "suppressDeprecationMessages": false,
+      "presets": [],
+      "plugins": [
+        [
+          [],
+          {
+            "loose": false
+          }
+        ]
+      ],
+      "ignore": [],
+      "code": true,
+      "metadata": true,
+      "ast": false,
+      "comments": true,
+      "compact": "auto",
+      "minified": false,
+      "sourceMaps": "both",
+      "sourceMapTarget": "log.js",
+      "sourceFileName": "log.js",
+      "sourceRoot": "/Users/migueldiaz/Development/zed/zed-api/node_modules/semantic-release-cli/src/lib",
+      "babelrc": false,
+      "sourceType": "module",
+      "moduleRoot": "/Users/migueldiaz/Development/zed/zed-api/node_modules/semantic-release-cli/src/lib",
+      "moduleIds": false,
+      "passPerPreset": false,
+      "parserOpts": false,
+      "generatorOpts": false,
+      "basename": "log"
+    },
+    "ignored": false,
+    "code": "'use strict';\n\nconst log = require('npmlog');\n\nmodule.exports = function (level) {\n  log.level = level;\n  ['silly', 'verbose', 'info', 'http', 'warn', 'error'].forEach(level => {\n    log[level] = log[level].bind(log, 'semantic-release');\n  });\n\n  return log;\n};\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImxvZy5qcyJdLCJuYW1lcyI6WyJsb2ciLCJyZXF1aXJlIiwibW9kdWxlIiwiZXhwb3J0cyIsImxldmVsIiwiZm9yRWFjaCIsImJpbmQiXSwibWFwcGluZ3MiOiI7O0FBQUEsTUFBTUEsTUFBTUMsUUFBUSxRQUFSLENBQVo7O0FBRUFDLE9BQU9DLE9BQVAsR0FBaUIsVUFBVUMsS0FBVixFQUFpQjtBQUNoQ0osTUFBSUksS0FBSixHQUFZQSxLQUFaO0FBQ0EsR0FBQyxPQUFELEVBQVUsU0FBVixFQUFxQixNQUFyQixFQUE2QixNQUE3QixFQUFxQyxNQUFyQyxFQUE2QyxPQUE3QyxFQUFzREMsT0FBdEQsQ0FBK0RELEtBQUQsSUFBVztBQUN2RUosUUFBSUksS0FBSixJQUFhSixJQUFJSSxLQUFKLEVBQVdFLElBQVgsQ0FBZ0JOLEdBQWhCLEVBQXFCLGtCQUFyQixDQUFiO0FBQ0QsR0FGRDs7QUFJQSxTQUFPQSxHQUFQO0FBQ0QsQ0FQRCIsImZpbGUiOiJsb2cuanMiLCJzb3VyY2VSb290IjoiL1VzZXJzL21pZ3VlbGRpYXovRGV2ZWxvcG1lbnQvemVkL3plZC1hcGkvbm9kZV9tb2R1bGVzL3NlbWFudGljLXJlbGVhc2UtY2xpL3NyYy9saWIiLCJzb3VyY2VzQ29udGVudCI6WyJjb25zdCBsb2cgPSByZXF1aXJlKCducG1sb2cnKTtcblxubW9kdWxlLmV4cG9ydHMgPSBmdW5jdGlvbiAobGV2ZWwpIHtcbiAgbG9nLmxldmVsID0gbGV2ZWw7XG4gIFsnc2lsbHknLCAndmVyYm9zZScsICdpbmZvJywgJ2h0dHAnLCAnd2FybicsICdlcnJvciddLmZvckVhY2goKGxldmVsKSA9PiB7XG4gICAgbG9nW2xldmVsXSA9IGxvZ1tsZXZlbF0uYmluZChsb2csICdzZW1hbnRpYy1yZWxlYXNlJyk7XG4gIH0pO1xuXG4gIHJldHVybiBsb2c7XG59O1xuIl19",
+    "ast": null,
+    "map": {
+      "version": 3,
+      "sources": [
+        "log.js"
+      ],
+      "names": [
+        "log",
+        "require",
+        "module",
+        "exports",
+        "level",
+        "forEach",
+        "bind"
+      ],
+      "mappings": ";;AAAA,MAAMA,MAAMC,QAAQ,QAAR,CAAZ;;AAEAC,OAAOC,OAAP,GAAiB,UAAUC,KAAV,EAAiB;AAChCJ,MAAII,KAAJ,GAAYA,KAAZ;AACA,GAAC,OAAD,EAAU,SAAV,EAAqB,MAArB,EAA6B,MAA7B,EAAqC,MAArC,EAA6C,OAA7C,EAAsDC,OAAtD,CAA+DD,KAAD,IAAW;AACvEJ,QAAII,KAAJ,IAAaJ,IAAII,KAAJ,EAAWE,IAAX,CAAgBN,GAAhB,EAAqB,kBAArB,CAAb;AACD,GAFD;;AAIA,SAAOA,GAAP;AACD,CAPD",
+      "file": "log.js",
+      "sourceRoot": "/Users/migueldiaz/Development/zed/zed-api/node_modules/semantic-release-cli/src/lib",
+      "sourcesContent": [
+        "const log = require('npmlog');\n\nmodule.exports = function (level) {\n  log.level = level;\n  ['silly', 'verbose', 'info', 'http', 'warn', 'error'].forEach((level) => {\n    log[level] = log[level].bind(log, 'semantic-release');\n  });\n\n  return log;\n};\n"
+      ]
+    },
+    "mtime": 1649349461119
   }
 }
