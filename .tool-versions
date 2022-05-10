@@ -1,6 +1,6 @@
-elixir 1.12.3
-erlang 24.3.3
+elixir 1.12.2-otp-24
 haskell 8.10.7
 golang 1.17.3
 postgres 13.4
-nodejs 16.4.2
+nodejs 16.14.2
+erlang 24.0.5

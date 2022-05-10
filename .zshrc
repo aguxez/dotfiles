@@ -1,5 +1,5 @@
 # Better editor
-EDITOR=vim
+export EDITOR=vim
 
 # Loads vcs_info for PROMPT
 autoload -Uz vcs_info
@@ -35,8 +35,7 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 # User configuration
 
-. /Users/migueldiaz/.asdf/completions/asdf.bash
-. /Users/migueldiaz/.asdf/asdf.sh
+. /opt/homebrew/opt/asdf/libexec/asdf.sh
 
 # ---------------------
 
@@ -46,19 +45,14 @@ export NVM_DIR="$HOME/.nvm"
 # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 # [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/migueldiaz/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/migueldiaz/Downloads/google-cloud-sdk/path.zsh.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/migueldiaz/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/migueldiaz/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
-
 source /Users/migueldiaz/.zsh/antigen-hs/init.zsh
-source /Users/migueldiaz/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
-
-bindkey '^[[A' history-substring-search-up
-bindkey '^[[B' history-substring-search-down
 
 export GPG_TTY=$(tty)
 
 export PATH="$PATH:/Users/migueldiaz/.foundry/bin"
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/migueldiaz/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/migueldiaz/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/migueldiaz/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/migueldiaz/google-cloud-sdk/completion.zsh.inc'; fi
