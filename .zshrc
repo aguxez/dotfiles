@@ -49,7 +49,13 @@ source /Users/migueldiaz/.zsh/antigen-hs/init.zsh
 
 export GPG_TTY=$(tty)
 
-export PATH="$PATH:/Users/migueldiaz/.foundry/bin"
+# Foundry
+FOUNDRY_BIN=$HOME/.foundry/bin
+
+# GHCUP
+GHCUP_BIN=$HOME/.ghcup/bin
+
+export PATH=$PATH:$FOUNDRY_BIN:$GHCUP_BIN
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/migueldiaz/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/migueldiaz/google-cloud-sdk/path.zsh.inc'; fi
