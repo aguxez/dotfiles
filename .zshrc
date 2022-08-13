@@ -11,9 +11,16 @@ setopt prompt_subst
 PROMPT='%F{082}%~%f ${vcs_info_msg_0_} -> '
 
 # ALIASES
-# Alias HH and utilities
+# Alias HH
 alias hh='npx hardhat'
+
+# Utilities
 alias gst='git status'
+
+# Haskell
+alias str='stack run'
+alias stb='stack build'
+alias stbp='stb --pedantic'
 
 # kubectl
 alias kc=kubectl
@@ -55,10 +62,14 @@ FOUNDRY_BIN=$HOME/.foundry/bin
 # GHCUP
 GHCUP_BIN=$HOME/.ghcup/bin
 
-export PATH=$PATH:$FOUNDRY_BIN:$GHCUP_BIN
+export PATH=$PATH:$FOUNDRY_BIN:$GHCUP_BIN:$HOME/.local/bin:/opt/homebrew/opt/llvm/bin
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/migueldiaz/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/migueldiaz/google-cloud-sdk/path.zsh.inc'; fi
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/migueldiaz/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/migueldiaz/google-cloud-sdk/completion.zsh.inc'; fi
+
+export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
+export C_INCLUDE_PATH="`xcrun --show-sdk-path`/usr/include/ffi"
