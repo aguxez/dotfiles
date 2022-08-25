@@ -1,21 +1,24 @@
-# Better editor
+# -------------------
 export EDITOR=vim
 
 # Loads vcs_info for PROMPT
 autoload -Uz vcs_info
 precmd() { vcs_info }
 
+# -------------------
 zstyle ':vcs_info:git:*' formats 'on %b %u'
 
 setopt prompt_subst
 PROMPT='%F{082}%~%f ${vcs_info_msg_0_} -> '
 
+# -------------------
+
 # ALIASES
-# Alias HH
 alias hh='npx hardhat'
 
-# Utilities
 alias gst='git status'
+alias glp='git log --color --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit --branches'
+alias gpf='git push --force-with-lease'
 
 # Haskell
 alias str='stack run'
@@ -25,7 +28,6 @@ alias stbp='stb --pedantic'
 # kubectl
 alias kc=kubectl
 
-# goodies
 alias ..='cd ..'
 alias ll='ls -l'
 alias la='ls -la'
