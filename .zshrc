@@ -20,11 +20,6 @@ alias gst='git status'
 alias glp='git log --color --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit --branches'
 alias gpf='git push --force-with-lease'
 
-# Haskell
-alias str='stack run'
-alias stb='stack build'
-alias stbp='stb --pedantic'
-
 # kubectl
 alias kc=kubectl
 
@@ -64,7 +59,7 @@ FOUNDRY_BIN=$HOME/.foundry/bin
 # GHCUP
 GHCUP_BIN=$HOME/.ghcup/bin
 
-export PATH=$PATH:$FOUNDRY_BIN:$GHCUP_BIN:$HOME/.local/bin:/opt/homebrew/opt/llvm/bin
+export PATH=$PATH:$FOUNDRY_BIN:$GHCUP_BIN:$HOME/.local/bin:/opt/homebrew/opt/llvm/bin:$HOME/.cabal/bin
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/migueldiaz/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/migueldiaz/google-cloud-sdk/path.zsh.inc'; fi
