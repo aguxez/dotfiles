@@ -70,3 +70,5 @@ if [ -f '/Users/migueldiaz/google-cloud-sdk/completion.zsh.inc' ]; then . '/User
 export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
 export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
 export C_INCLUDE_PATH="`xcrun --show-sdk-path`/usr/include/ffi"
+
+export CLARINET_DISABLE_HINTS=1
