@@ -59,7 +59,7 @@ FOUNDRY_BIN=$HOME/.foundry/bin
 # GHCUP
 GHCUP_BIN=$HOME/.ghcup/bin
 
-export PATH=$PATH:$FOUNDRY_BIN:$GHCUP_BIN:$HOME/.local/bin:/opt/homebrew/opt/llvm/bin:$HOME/.cabal/bin
+export PATH=$PATH:$(yarn global bin):$FOUNDRY_BIN:$GHCUP_BIN:$HOME/.local/bin:/opt/homebrew/opt/llvm/bin:$HOME/.cabal/bin
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/migueldiaz/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/migueldiaz/google-cloud-sdk/path.zsh.inc'; fi
