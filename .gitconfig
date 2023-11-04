@@ -5,7 +5,7 @@
 [http]
 	postBuffer = 157286400
 [init]
-	defaultBranch = master
+	defaultBranch = main
 [core]
 	editor = vim
 	autocrlf = input
