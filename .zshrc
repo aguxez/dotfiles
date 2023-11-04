@@ -26,16 +26,13 @@ alias kc=kubectl
 alias ..='cd ..'
 alias ll='ls -l'
 alias la='ls -la'
+alias brewpls='brew update && brew upgrade'
 
 # -------------------
 
 DISABLE_UPDATE_PROMPT="true"
-
 COMPLETION_WAITING_DOTS="true"
-
 DISABLE_UNTRACKED_FILES_DIRTY="true"
-
-# HIST_STAMPS="mm/dd/yyyy"
 
 # User configuration
 
@@ -44,10 +41,6 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 # ---------------------
 
 export NVM_DIR="$HOME/.nvm"
-
-# NVM setup is comented because it's super slow and I personally don't use NVM so often to have this active by default
-# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 source /Users/migueldiaz/.zsh/antigen-hs/init.zsh
 
@@ -71,4 +64,5 @@ export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
 export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
 export C_INCLUDE_PATH="`xcrun --show-sdk-path`/usr/include/ffi"
 
+# Clarinet - Stacks Blockchain
 export CLARINET_DISABLE_HINTS=1
