@@ -12,10 +12,8 @@ setopt prompt_subst
 PROMPT='%F{082}%~%f ${vcs_info_msg_0_} -> '
 
 # -------------------
-
 # ALIASES
 alias hh='npx hardhat'
-
 alias gst='git status'
 alias glp='git log --color --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit --branches'
 alias gpf='git push --force-with-lease'
@@ -52,7 +50,15 @@ FOUNDRY_BIN=$HOME/.foundry/bin
 # GHCUP
 GHCUP_BIN=$HOME/.ghcup/bin
 
-export PATH=$PATH:$(yarn global bin):$FOUNDRY_BIN:$GHCUP_BIN:$HOME/.local/bin:/opt/homebrew/opt/llvm/bin:$HOME/.cabal/bin
+export GOPATH=$(asdf where golang)/packages
+export GOROOT=$(asdf where golang)/go
+
+export PATH="${PATH}:$(go env GOPATH)/bin"
+export PATH=$PATH:$(yarn global bin)
+export PATH=$PATH:$FOUNDRY_BIN:$GHCUP_BIN:$HOME/.local/bin
+export PATH=$PATH:/opt/homebrew/opt/llvm/bin:$HOME/.cabal/bin
+export PATH=$PATH:$HOME/Library/Android/sdk/platform-tools
+export PATH=$PATH:$HOME/.deno/bin
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/migueldiaz/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/migueldiaz/google-cloud-sdk/path.zsh.inc'; fi
@@ -66,3 +72,24 @@ export C_INCLUDE_PATH="`xcrun --show-sdk-path`/usr/include/ffi"
 
 # Clarinet - Stacks Blockchain
 export CLARINET_DISABLE_HINTS=1
+
+# Init StarShip
+eval "$(starship init zsh)"
+
+# Autocompletion ZSH
+
+zstyle '*:compinit' arguments -D -i -u -C -w
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+
+# pnpm
+export PNPM_HOME="/Users/migueldiaz/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+source $HOME/.no-commit.zshrc
