@@ -1,10 +1,10 @@
-elixir 1.15.2
+elixir 1.17
 haskell 8.10.7
 golang 1.22.4
 postgres 15.3
 nodejs 20.0.0
-erlang 26.0
+erlang 27.0
 redis 6.2.2
-gleam 1.1.0
+gleam 1.4.0
 rebar 3.23.0
 flutter 3.22.1-stable

@@ -1,6 +1,6 @@
 [user]
 	name = Miguel Diaz
-	email = diazmiiguel@gmail.com
+	email = github.com.hf06j@slmail.me
 	signingkey = 84FA9AD947D87CDF
 [http]
 	postBuffer = 157286400
@@ -14,3 +14,5 @@
 	rebase = true
 [diff]
 	colorMoved = zebra
+[alias]
+	sync-rebase = !git switch main && git pull && git switch - && git rebase main --interactive --autosquash
