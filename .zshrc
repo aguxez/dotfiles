@@ -44,7 +44,6 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 export PATH="${PATH}:$(go env GOPATH)/bin"
-export PATH=$PATH:$(yarn global bin)
 export PATH=$PATH:$FOUNDRY_BIN:$GHCUP_BIN:$HOME/.local/bin
 export PATH=$PATH:$HOME/.cabal/bin
 export PATH=$PATH:$HOME/Library/Android/sdk/platform-tools
