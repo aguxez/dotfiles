@@ -1,5 +1,6 @@
 # -------------------
 export EDITOR=vim
+export GITHUB_USER=aguxez
 
 # Loads vcs_info for PROMPT
 autoload -Uz vcs_info
@@ -24,6 +25,9 @@ alias ..='cd ..'
 alias ll='ls -l'
 alias la='ls -la'
 alias brewpls='brew update && brew upgrade'
+alias gh-self-review="gh api repos/vhslab/zedx/pulls/\$(gh pr view --json number --jq .number)/comments | jq --arg user \"\$GITHUB_USER\" '.[] | select(.user.login == \$user) | {body: .body, path: .path, line: .line, created_at: .created_at, id: .id, start_line: .start_line}'"
+alias git-sync-prs='current_branch=$(git branch --show-current) && gh pr list --author "@me" --json headRefName,baseRefName --jq ".[] | select(.baseRefName == \"main\") | .headRefName" | xargs -I {} sh -c "echo \"Syncing branch: {}\" && git switch {} && git sync-rebase" && git switch $current_branch'
+alias mv-to-zedx='cd $HOME/Development/zed/zedx'
 
 # -------------------
 
@@ -93,3 +97,6 @@ source $HOME/.no-commit.zshrc
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
+
+# opencode
+export PATH=/Users/migueldiaz/.opencode/bin:$PATH
