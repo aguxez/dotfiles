@@ -49,7 +49,6 @@ export NVM_DIR="$HOME/.nvm"
 
 export PATH="${PATH}:$(go env GOPATH)/bin"
 export PATH=$PATH:$FOUNDRY_BIN:$GHCUP_BIN:$HOME/.local/bin
-export PATH=$PATH:$HOME/.cabal/bin
 export PATH=$PATH:$HOME/Library/Android/sdk/platform-tools
 export PATH=$PATH:$HOME/.deno/bin
 export PATH=$PATH:/opt/homebrew/anaconda3/bin
@@ -100,3 +99,9 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 
 # opencode
 export PATH=/Users/migueldiaz/.opencode/bin:$PATH
+
+# Added by Antigravity
+export PATH="/Users/migueldiaz/.antigravity/antigravity/bin:$PATH"
+
+# Added by Antigravity
+export PATH="/Users/migueldiaz/.antigravity/antigravity/bin:$PATH"
